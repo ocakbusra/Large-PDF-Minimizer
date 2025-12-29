@@ -1,29 +1,54 @@
-DNS AYARLARI (Domain Paneline Girilecek Değerler)
+# DNS AYARLARI - GitHub Pages için
+# minimizepdf.com domain'inizi GitHub Pages'e bağlamak için:
 
-Web sitenizi Vercel üzerinden yayınlamak için domaini satın aldığınız firmanın (GoDaddy, İsimtescil, Google Domains vb.) yönetim paneline gidip aşağıdaki 2 kaydı eklemeniz gerekmektedir.
+## Turhost (veya diğer DNS sağlayıcınız) panelinde şu kayıtları ekleyin/güncelleyin:
 
----------------------------------------------------------
-KAYIT 1: Ana Domain Bağlantısı (A Record)
----------------------------------------------------------
-Tür (Type)    : A
-Ad (Name)     : @  (Eğer @ kabul etmezse boş bırakın)
-Değer (Value) : 76.76.21.21
-TTL           : Otomatik (veya 3600)
+### 1. A Kayıtları (Root domain için - @ veya boş)
+# GitHub Pages 4 farklı IP kullanır, hepsini eklemeniz önerilir:
 
----------------------------------------------------------
-KAYIT 2: "www" Bağlantısı (CNAME Record)
----------------------------------------------------------
-Tür (Type)    : CNAME
-Ad (Name)     : www
-Değer (Value) : cname.vercel-dns.com
-TTL           : Otomatik (veya 3600)
+Type: A
+Name: @ (veya boş bırakın)
+Value: 185.199.108.153
 
----------------------------------------------------------
-NASIL YAPILIR? (Adım Adım)
----------------------------------------------------------
-1. Domaini aldığınız sitenin (Örn: GoDaddy) paneline giriş yapın.
-2. "Domainlerim" kısmından minimizepdf.com'u bulun.
-3. "DNS Yönetimi" veya "DNS Ayarları" butonuna tıklayın.
-4. Çıkan listede mevcut gereksiz kayıtlar varsa (Park sayfası vb.) silin.
-5. "Yeni Kayıt Ekle" diyerek yukarıdaki 2 kaydı sırasıyla girin.
-6. Kaydedin. Ayarların tüm dünyada aktif olması 1-24 saat sürebilir.
+Type: A
+Name: @ (veya boş bırakın)
+Value: 185.199.109.153
+
+Type: A
+Name: @ (veya boş bırakın)
+Value: 185.199.110.153
+
+Type: A
+Name: @ (veya boş bırakın)
+Value: 185.199.111.153
+
+
+### 2. CNAME Kaydı (www subdomain için)
+
+Type: CNAME
+Name: www
+Value: ocakbusra.github.io
+
+
+## ÖZET TABLO:
+# | Tür   | İsim | Değer               |
+# |-------|------|---------------------|
+# | A     | @    | 185.199.108.153     |
+# | A     | @    | 185.199.109.153     |
+# | A     | @    | 185.199.110.153     |
+# | A     | @    | 185.199.111.153     |
+# | CNAME | www  | ocakbusra.github.io |
+
+
+## ÖNEMLİ NOTLAR:
+# 1. Mevcut A kaydını (76.76.21.21 veya 216.198.79.1) SİLİN
+# 2. Mevcut www CNAME kaydını (cname.vercel-dns.com) SİLİN
+# 3. Yukarıdaki yeni kayıtları ekleyin
+# 4. DNS propagasyonu 5-30 dakika sürebilir
+
+## GitHub Pages Ayarları:
+# 1. GitHub repo'nuza gidin: https://github.com/ocakbusra/Large-PDF-Minimizer
+# 2. Settings > Pages bölümüne gidin
+# 3. Source: "GitHub Actions" seçin
+# 4. Custom domain: "minimizepdf.com" yazın
+# 5. "Enforce HTTPS" kutusunu işaretleyin

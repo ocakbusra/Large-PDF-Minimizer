@@ -7,9 +7,10 @@ import {
 import { CompressionStatus, PDFFile } from './types';
 import { compressPDF, formatBytes } from './services/pdfService';
 import { ConsentBanner } from './ConsentBanner';
-import { Routes, Route, useParams, Navigate } from 'react-router-dom';
+import { Routes, Route, useParams, Navigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { seoPages } from './src/seoData';
+import { PrivacyPolicy } from './PrivacyPolicy';
 
 // --- TRANSLATIONS ---
 
@@ -570,7 +571,7 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-bold mb-6">{t.footer.legal}</h4>
             <ul className="space-y-4 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">{t.footer.privacy}</a></li>
+              <li><Link to="/privacy-policy" className="hover:text-white transition-colors">{t.footer.privacy}</Link></li>
               <li><a href="#" className="hover:text-white transition-colors">{t.footer.terms}</a></li>
               <li><a href="#" className="hover:text-white transition-colors">{t.footer.contact}</a></li>
             </ul>
@@ -680,6 +681,7 @@ const AppContent = () => {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/:slug" element={<LandingPage />} />
     </Routes>
   );

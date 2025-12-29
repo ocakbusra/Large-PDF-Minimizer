@@ -1,4 +1,4 @@
-# DevPDF Pro - Large PDF Minimizer
+# MinimizePDF
 
 **DevPDF Pro** is a high-performance web application designed to compress large PDF files (200MB+) directly in the browser using WebAssembly technology.
 

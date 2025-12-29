@@ -7,6 +7,9 @@ import {
 import { CompressionStatus, PDFFile } from './types';
 import { compressPDF, formatBytes } from './services/pdfService';
 import { ConsentBanner } from './ConsentBanner';
+import { Routes, Route, useParams, Navigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { seoPages } from './src/seoData';
 
 // --- TRANSLATIONS ---
 
@@ -572,11 +575,53 @@ const Footer = () => {
 
 // --- APP ---
 
-const AppContent = () => {
-  const { t } = useLanguage();
+const LandingPage = () => {
+  const { slug } = useParams();
+  const { t, language } = useLanguage();
+
+  // Default values based on current language
+  let pageData = {
+    title: language === 'tr' ? 'Minimize PDF - Ücretsiz 200MB+ PDF Sıkıştırıcı' : 'Minimize PDF - Free 200MB+ PDF Compressor',
+    description: language === 'tr' ? '200MB üzeri PDF dosyalarını ücretsiz sıkıştırın. %90\'a varan sıkıştırma.' : 'Free PDF compressor for 200MB+ files. Up to 90% compression.',
+    heroBadge: t.hero.badge,
+    heroTitleStart: t.hero.titleStart,
+    heroTitleEnd: t.hero.titleEnd,
+    heroSubtitle: t.hero.subtitle
+  };
+
+  // If slug exists, try to find matching SEO page
+  if (slug) {
+    const found = seoPages.find(p => p.slug === slug);
+    if (found) {
+      pageData = {
+        title: found.title,
+        description: found.description,
+        heroBadge: found.heroBadge,
+        heroTitleStart: found.heroTitleStart,
+        heroTitleEnd: found.heroTitleEnd,
+        heroSubtitle: found.heroSubtitle
+      };
+    } else {
+      // If slug provided but not found, redirect to home
+      return <Navigate to="/" replace />;
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-indigo-500 selection:text-white">
+      <Helmet>
+        <title>{pageData.title}</title>
+        <meta name="description" content={pageData.description} />
+        {/* Canonical Link */}
+        <link rel="canonical" href={`https://minimizepdf.com${slug ? '/' + slug : ''}`} />
+
+        {/* OG Tags override */}
+        <meta property="og:title" content={pageData.title} />
+        <meta property="og:description" content={pageData.description} />
+        <meta property="twitter:title" content={pageData.title} />
+        <meta property="twitter:description" content={pageData.description} />
+      </Helmet>
+
       <Navbar />
 
       {/* Hero Section */}
@@ -591,14 +636,14 @@ const AppContent = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t.hero.badge}</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{pageData.heroBadge}</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-[1.1] animate-in slide-in-from-bottom-4 fade-in duration-700 delay-100">
-              {t.hero.titleStart} <br />
-              <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600">{t.hero.titleEnd}</span>
+              {pageData.heroTitleStart} <br />
+              <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600">{pageData.heroTitleEnd}</span>
             </h1>
             <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-200">
-              {t.hero.subtitle}
+              {pageData.heroSubtitle}
             </p>
           </div>
 
@@ -613,6 +658,15 @@ const AppContent = () => {
       <ConsentBanner />
       <Footer />
     </div>
+  );
+};
+
+const AppContent = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/:slug" element={<LandingPage />} />
+    </Routes>
   );
 };
 

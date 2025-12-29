@@ -5,15 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && cp dist/index.html dist/404.html",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react-dom": "^19.2.3",
     "lucide-react": "^0.562.0",
-    "react": "^19.2.3",
     "pdf-lib": "^1.17.1",
-    "pdfjs-dist": "4.0.379"
+    "pdfjs-dist": "4.0.379",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-helmet-async": "^2.0.5",
+    "react-router-dom": "^7.11.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

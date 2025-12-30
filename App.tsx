@@ -54,7 +54,7 @@ const translations = {
       genericError: "An error occurred during compression."
     },
     features: {
-      title: "Why Minimize PDF?",
+      title: "Why MinimizePDF?",
       subtitle: "Free tools reject 200MB+ files. We built an engine that handles them with ease.",
       secureTitle: "No Upload Limits",
       secureDesc: "200MB, 500MB, 1GB+ — upload any size. Other free tools block large files; we compress them.",
@@ -79,7 +79,16 @@ const translations = {
       privacy: "Privacy Policy",
       terms: "Terms of Use",
       contact: "Contact",
-      rights: "Minimize PDF. All rights reserved."
+      rights: "MinimizePDF. All rights reserved."
+    },
+    welcome: {
+      title: "Professional PDF Compression Solution",
+      desc: "MinimizePDF is a next-generation tool designed to handle large file sizes efficiently. Unlike traditional tools that require uploads, our WebAssembly technology processes your files directly in your browser. This means your sensitive documents never leave your device, ensuring 100% privacy and security while delivering enterprise-grade compression."
+    },
+    didYouKnow: {
+      title: "While we work...",
+      fact: "Did you know? Our browser-based compression technology protects your privacy by ensuring your document is processed locally on your computer, not on a remote server.",
+      tip: "Pro Tip: You can compress multiple files one after another without any daily limits."
     }
   },
   tr: {
@@ -119,7 +128,7 @@ const translations = {
       genericError: "Sıkıştırma sırasında bir hata oluştu."
     },
     features: {
-      title: "Neden Minimize PDF?",
+      title: "Neden MinimizePDF?",
       subtitle: "Ücretsiz araçlar 200MB+ dosyaları reddeder. Biz onları kolayca işleyen bir motor geliştirdik.",
       secureTitle: "Boyut Limiti Yok",
       secureDesc: "200MB, 500MB, 1GB+ — istediğiniz boyutu yükleyin. Diğer ücretsiz araçlar büyük dosyaları engeller; biz sıkıştırırız.",
@@ -144,7 +153,16 @@ const translations = {
       privacy: "Gizlilik Politikası",
       terms: "Kullanım Şartları",
       contact: "İletişim",
-      rights: "Minimize PDF. Tüm hakları saklıdır."
+      rights: "MinimizePDF. Tüm hakları saklıdır."
+    },
+    welcome: {
+      title: "Profesyonel PDF Sıkıştırma Çözümü",
+      desc: "MinimizePDF, büyük dosya boyutlarıyla başa çıkmak için tasarlanmış yeni nesil bir araçtır. Geleneksel araçların aksine, WebAssembly teknolojimiz dosyalarınızı sunuculara yüklemeden doğrudan tarayıcınızda işler. Bu, hassas belgelerinizin cihazınızdan asla çıkmamasını sağlayarak %100 gizlilik ve güvenlik sunarken kurumsal düzeyde sıkıştırma sağlar."
+    },
+    didYouKnow: {
+      title: "Biz çalışırken...",
+      fact: "Biliyor muydunuz? Tarayıcı tabanlı sıkıştırma teknolojimiz, belgenizin uzak bir sunucuda değil, yerel olarak bilgisayarınızda işlenmesini sağlayarak gizliliğinizi korur.",
+      tip: "İpucu: Günlük limit olmadan dosyalarınızı art arda sıkıştırabilirsiniz."
     }
   }
 };
@@ -285,7 +303,7 @@ const PDFCompressor = () => {
       const url = URL.createObjectURL(file.compressedBlob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `min_devpdf_${file.name}`;
+      a.download = `minimizepdf_${file.name}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -370,6 +388,19 @@ const PDFCompressor = () => {
             <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden max-w-md mx-auto">
               <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
+
+            {/* Did You Know Section - Adds publisher content to processing screen */}
+            <div className="max-w-md mx-auto bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 text-left mt-8">
+              <h4 className="flex items-center gap-2 font-bold text-indigo-900 mb-2">
+                <Sparkles size={16} className="text-indigo-600" />
+                {t.didYouKnow.title}
+              </h4>
+              <p className="text-sm text-indigo-800/80 mb-3">{t.didYouKnow.fact}</p>
+              <p className="text-xs text-indigo-600 font-medium bg-indigo-100/50 p-2 rounded-lg">
+                {t.didYouKnow.tip}
+              </p>
+            </div>
+
             {/* Processing Ad - Gold Spot */}
             <AdvertisementBox
               slot="processing-slot-id"
@@ -616,7 +647,7 @@ const LandingPage = () => {
   // Default values based on current language
   // Default values based on current language
   let pageData = {
-    title: language === 'tr' ? 'Minimize PDF - Ücretsiz 200MB+ PDF Sıkıştırıcı' : 'Minimize PDF - Free 200MB+ PDF Compressor',
+    title: language === 'tr' ? 'MinimizePDF - Ücretsiz 200MB+ PDF Sıkıştırıcı' : 'MinimizePDF - Free 200MB+ PDF Compressor',
     description: language === 'tr' ? '200MB üzeri PDF dosyalarını ücretsiz sıkıştırın. %90\'a varan sıkıştırma.' : 'Free PDF compressor for 200MB+ files. Up to 90% compression.',
     heroBadge: t.hero.badge,
     heroTitleStart: t.hero.titleStart,
@@ -699,12 +730,20 @@ const LandingPage = () => {
           <div className="animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
             <PDFCompressor />
 
-            {/* ATF Ad Strategy - Below Tool */}
+            {/* Welcome Content - SEO & AdSense Content Requirement */}
+            <div className="max-w-3xl mx-auto mt-16 text-center">
+              <h2 className="text-2xl font-bold text-slate-800 mb-4">{t.welcome.title}</h2>
+              <p className="text-slate-600 leading-relaxed text-lg">
+                {t.welcome.desc}
+              </p>
+            </div>
+
+            {/* ATF Ad Strategy - Below Content */}
             <AdvertisementBox
               slot="atf-slot-id"
               style={{ minHeight: '100px' }}
               responsive={true}
-              className="mt-16 max-w-3xl mx-auto"
+              className="mt-12 max-w-3xl mx-auto"
               label="ATF Ad (Responsive)"
             />
           </div>

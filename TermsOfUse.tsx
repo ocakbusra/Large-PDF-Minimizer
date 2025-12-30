@@ -10,12 +10,12 @@ export const TermsOfUse: React.FC = () => {
         en: {
             title: "Terms of Use",
             lastUpdated: "Last Updated: December 29, 2025",
-            intro: "Welcome to Minimize PDF. By accessing or using our website, you agree to be bound by these Terms of Use. If you disagree with any part of these terms, you may not access the service.",
+            intro: "Welcome to MinimizePDF. By accessing or using our website, you agree to be bound by these Terms of Use. If you disagree with any part of these terms, you may not access the service.",
             sections: [
                 {
                     icon: <FileCheck className="text-indigo-600" size={24} />,
                     title: "Description of Service",
-                    text: "Minimize PDF provides a free, browser-based online PDF compression tool. We utilize WebAssembly technology to process files locally on your device. We do not store, copy, or transmit your files to any server. You retain full ownership and control of your documents at all times."
+                    text: "MinimizePDF provides a free, browser-based online PDF compression tool. We utilize WebAssembly technology to process files locally on your device. We do not store, copy, or transmit your files to any server. You retain full ownership and control of your documents at all times."
                 },
                 {
                     icon: <Scale className="text-indigo-600" size={24} />,
@@ -25,7 +25,7 @@ export const TermsOfUse: React.FC = () => {
                 {
                     icon: <Copyright className="text-indigo-600" size={24} />,
                     title: "Intellectual Property",
-                    text: "The Minimize PDF website, its design, logos, and underlying code are the property of Minimize PDF and are protected by copyright laws. However, the files you process remain your intellectual property."
+                    text: "The MinimizePDF website, its design, logos, and underlying code are the property of MinimizePDF and are protected by copyright laws. However, the files you process remain your intellectual property."
                 },
                 {
                     icon: <AlertTriangle className="text-indigo-600" size={24} />,
@@ -42,12 +42,12 @@ export const TermsOfUse: React.FC = () => {
         tr: {
             title: "Kullanım Şartları",
             lastUpdated: "Son Güncelleme: 29 Aralık 2025",
-            intro: "Minimize PDF'e hoş geldiniz. Web sitemize erişerek veya kullanarak, bu Kullanım Şartları'na uymayı kabul etmiş olursunuz. Bu şartların herhangi bir kısmını kabul etmiyorsanız, hizmeti kullanamazsınız.",
+            intro: "MinimizePDF'e hoş geldiniz. Web sitemize erişerek veya kullanarak, bu Kullanım Şartları'na uymayı kabul etmiş olursunuz. Bu şartların herhangi bir kısmını kabul etmiyorsanız, hizmeti kullanamazsınız.",
             sections: [
                 {
                     icon: <FileCheck className="text-indigo-600" size={24} />,
                     title: "Hizmet Tanımı",
-                    text: "Minimize PDF, ücretsiz, tarayıcı tabanlı bir çevrimiçi PDF sıkıştırma aracı sağlar. Dosyaları yerel olarak cihazınızda işlemek için WebAssembly teknolojisini kullanıyoruz. Dosyalarınızı depolamıyor, kopyalamıyor veya herhangi bir sunucuya iletmiyoruz. Belgelerinizin tam mülkiyeti ve kontrolü her zaman sizdedir."
+                    text: "MinimizePDF, ücretsiz, tarayıcı tabanlı bir çevrimiçi PDF sıkıştırma aracı sağlar. Dosyaları yerel olarak cihazınızda işlemek için WebAssembly teknolojisini kullanıyoruz. Dosyalarınızı depolamıyor, kopyalamıyor veya herhangi bir sunucuya iletmiyoruz. Belgelerinizin tam mülkiyeti ve kontrolü her zaman sizdedir."
                 },
                 {
                     icon: <Scale className="text-indigo-600" size={24} />,
@@ -57,7 +57,7 @@ export const TermsOfUse: React.FC = () => {
                 {
                     icon: <Copyright className="text-indigo-600" size={24} />,
                     title: "Fikri Mülkiyet",
-                    text: "Minimize PDF web sitesi, tasarımı, logoları ve temel kodları Minimize PDF'in mülkiyetindedir ve telif hakkı yasalarıyla korunmaktadır. Ancak, işlediğiniz dosyalar sizin fikri mülkiyetinizde kalır."
+                    text: "MinimizePDF web sitesi, tasarımı, logoları ve temel kodları MinimizePDF'in mülkiyetindedir ve telif hakkı yasalarıyla korunmaktadır. Ancak, işlediğiniz dosyalar sizin fikri mülkiyetinizde kalır."
                 },
                 {
                     icon: <AlertTriangle className="text-indigo-600" size={24} />,

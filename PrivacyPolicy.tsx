@@ -10,7 +10,7 @@ export const PrivacyPolicy: React.FC = () => {
         en: {
             title: "Privacy Policy",
             lastUpdated: "Last Updated: December 29, 2025",
-            intro: "At Minimize PDF, we take your privacy seriously. Unlike other PDF tools, we have designed our service to process your files entirely within your web browser. This means your documents never leave your device.",
+            intro: "At MinimizePDF, we take your privacy seriously. Unlike other PDF tools, we have designed our service to process your files entirely within your web browser. This means your documents never leave your device.",
             sections: [
                 {
                     icon: <Server className="text-indigo-600" size={24} />,
@@ -42,7 +42,7 @@ export const PrivacyPolicy: React.FC = () => {
         tr: {
             title: "Gizlilik Politikası",
             lastUpdated: "Son Güncelleme: 29 Aralık 2025",
-            intro: "Minimize PDF olarak gizliliğinizi ciddiye alıyoruz. Diğer PDF araçlarının aksine, hizmetimizi dosyalarınızı tamamen web tarayıcınız içinde işleyecek şekilde tasarladık. Bu, belgelerinizin cihazınızdan asla çıkmadığı anlamına gelir.",
+            intro: "MinimizePDF olarak gizliliğinizi ciddiye alıyoruz. Diğer PDF araçlarının aksine, hizmetimizi dosyalarınızı tamamen web tarayıcınız içinde işleyecek şekilde tasarladık. Bu, belgelerinizin cihazınızdan asla çıkmadığı anlamına gelir.",
             sections: [
                 {
                     icon: <Server className="text-indigo-600" size={24} />,

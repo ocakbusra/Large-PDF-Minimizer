@@ -11,7 +11,7 @@ export const ProVersion: React.FC = () => {
             back: "Back to Free Version",
             badge: "COMING SOON",
             title: "Unleash the Ultimate Power",
-            subtitle: "We are building something extraordinary. Minimize PDF Pro will bring desktop-class power directly to your browser.",
+            subtitle: "We are building something extraordinary. MinimizePDF Pro will bring desktop-class power directly to your browser.",
             features: [
                 { title: "Batch Processing", desc: "Compress 100+ files at once" },
                 { title: "Ultra-High Quality", desc: "Lossless compression options" },
@@ -25,7 +25,7 @@ export const ProVersion: React.FC = () => {
             back: "Ücretsiz Sürüme Dön",
             badge: "ÇOK YAKINDA",
             title: "Maksimum Gücü Serbest Bırakın",
-            subtitle: "Olağanüstü bir şey inşa ediyoruz. Minimize PDF Pro, masaüstü sınıfı gücü doğrudan tarayıcınıza getirecek.",
+            subtitle: "Olağanüstü bir şey inşa ediyoruz. MinimizePDF Pro, masaüstü sınıfı gücü doğrudan tarayıcınıza getirecek.",
             features: [
                 { title: "Toplu İşleme", desc: "Aynı anda 100+ dosyayı sıkıştırın" },
                 { title: "Ultra Yüksek Kalite", desc: "Kayıpsız sıkıştırma seçenekleri" },
@@ -62,7 +62,7 @@ export const ProVersion: React.FC = () => {
                     </div>
 
                     <h1 className="text-5xl md:text-8xl font-black tracking-tight mb-8 leading-[1.1] bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400 animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-100">
-                        Minimize PDF <br />
+                        MinimizePDF <br />
                         <span className="text-indigo-500">PRO</span>
                     </h1>
 

@@ -1,3 +1,24 @@
+# robots.txt for MinimizePDF
+# https://minimizepdf.com
+
 User-agent: *
 Allow: /
+
+# Allow all static assets (important for Google favicon/images)
+Allow: /favicon-48x48.png
+Allow: /favicon-96x96.png
+Allow: /favicon-144x144.png
+Allow: /logo.png
+Allow: /og-image.jpg
+Allow: /twitter-image.jpg
+
+# Disallow development/internal paths
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+
+# Sitemap location
 Sitemap: https://minimizepdf.com/sitemap.xml
+
+# Crawl delay (optional, be nice to servers)
+Crawl-delay: 1

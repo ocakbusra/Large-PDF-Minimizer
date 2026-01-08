@@ -16,7 +16,19 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       target: 'esnext',
-      outDir: 'dist'
+      outDir: 'dist',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunks for better caching
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'pdf-vendor': ['pdf-lib', 'pdfjs-dist'],
+            'ui-vendor': ['lucide-react'],
+          },
+        },
+      },
+      // Increase chunk size warning limit
+      chunkSizeWarningLimit: 600,
     },
     base: '/',
     optimizeDeps: {
@@ -27,6 +39,9 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        '@/src': path.resolve(__dirname, './src'),
+        '@/components': path.resolve(__dirname, './src/components'),
+        '@/seo': path.resolve(__dirname, './src/seo'),
       }
     }
   };

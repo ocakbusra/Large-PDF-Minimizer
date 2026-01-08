@@ -14,7 +14,7 @@ export const AdvertisementBox: React.FC<AdProps> = ({
     slot,
     format = 'auto',
     responsive = true,
-    style = {},
+    style,
     className = '',
     label
 }) => {
@@ -28,14 +28,19 @@ export const AdvertisementBox: React.FC<AdProps> = ({
         }
     }, []);
 
-    const isDev = import.meta.env.DEV;
+    // Safe DEV check
+    const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+
+    // Extract dimensions from style with proper typing
+    const minHeight = style?.minHeight ?? style?.height ?? '280px';
+    const maxWidth = style?.maxWidth ?? style?.width ?? '100%';
 
     return (
         <div className={`w-full flex flex-col items-center justify-center my-8 ${className}`}>
             {/* CLS Prevention Wrapper */}
             <div
                 className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl overflow-hidden relative w-full flex items-center justify-center text-slate-400 text-xs font-mono"
-                style={{ minHeight: style.height || '280px', maxWidth: style.width || '100%' }}
+                style={{ minHeight, maxWidth }}
             >
                 {isDev && (
                     <div className="absolute inset-0 flex items-center justify-center bg-slate-100/50 z-10">

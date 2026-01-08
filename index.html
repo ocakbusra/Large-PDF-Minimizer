@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 
 <head>
     <!-- Google tag (gtag.js) -->
@@ -25,34 +25,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-adsense-account" content="ca-pub-8735602276697338">
     <meta name="description"
-        content="Free PDF compressor that handles 200MB+ files — where others fail, we deliver up to 90% compression. No uploads, 100% browser-based.">
+        content="Free Minimize PDF tool to reduce file size up to 90%. Best PDF Minimizer for large files (200MB+). Compress and minimize PDF online without uploads.">
     <meta name="keywords"
-        content="compress large pdf, 200mb pdf compressor, free pdf compressor, pdf shrink, online pdf reducer, big file compression">
+        content="minimize pdf, pdf minimizer, minimizer pdf, compress pdf, pdf compressor, reduce pdf size, shrink pdf, pdf size reducer, online pdf compression, free pdf compressor">
     <meta name="author" content="MinimizePDF">
     <meta name="robots" content="index, follow">
-    <link rel="icon" type="image/png" href="/logo.png">
 
+    <!-- Favicons for Google Search Results (48x48 minimum required) -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/favicon-144x144.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon-144x144.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://minimizepdf.com/">
+
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://minimizepdf.com/">
-    <meta property="og:title" content="MinimizePDF - Compress 200MB+ Files FREE">
+    <meta property="og:title" content="MinimizePDF - Free 200MB+ PDF Minimizer & Compressor">
     <meta property="og:description"
-        content="The only free tool that compresses PDFs over 200MB. Up to 90% smaller, 100% private, right in your browser.">
+        content="The only free tool that minimizes PDFs over 200MB. Up to 90% smaller, 100% private. Best PDF Minimizer in your browser.">
     <meta property="og:image" content="https://minimizepdf.com/og-image.jpg">
+    <meta property="og:site_name" content="MinimizePDF">
+    <meta property="og:locale" content="en_US">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="MinimizePDF - Compress 200MB+ Files FREE">
-    <meta property="twitter:description"
-        content="Free PDF compressor for 200MB+ files. 90% compression, zero uploads. Where others fail, we deliver.">
-    <meta property="twitter:image" content="https://minimizepdf.com/twitter-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MinimizePDF - Free 200MB+ PDF Minimizer & Compressor">
+    <meta name="twitter:description"
+        content="Free Minimize PDF tool for 200MB+ files. 90% compression, zero uploads. Where others fail, we deliver.">
+    <meta name="twitter:image" content="https://minimizepdf.com/twitter-image.jpg">
 
+    <!-- WebSite Schema for Google Site Name -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "MinimizePDF",
+      "alternateName": ["Minimize PDF", "PDF Minimizer", "minimizepdf.com"],
+      "url": "https://minimizepdf.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://minimizepdf.com/?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "MinimizePDF",
+      "url": "https://minimizepdf.com",
+      "logo": "https://minimizepdf.com/favicon-144x144.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@minimizepdf.com",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Turkish"]
+      }
+    }
+    </script>
+
+    <!-- SoftwareApplication Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "MinimizePDF",
       "url": "https://minimizepdf.com",
-      "description": "Free online PDF compressor tool to reduce file size up to 90% without uploading. Supports large files (200MB+).",
+      "description": "Free online Minimize PDF tool to reduce file size up to 90% without uploading. Supports large files (200MB+).",
       "applicationCategory": "BusinessApplication",
       "operatingSystem": "WebBrowser",
       "offers": {
@@ -69,15 +117,17 @@
         "worstRating": "1"
       },
       "featureList": [
-        "Compress PDF files up to 90%",
+        "Minimize PDF files up to 90%",
         "Supports files larger than 200MB",
         "Client-side processing (No uploads)",
-        "Secure and private"
+        "Secure and private",
+        "No file size limits",
+        "Free forever"
       ]
     }
     </script>
 
-    <title>MinimizePDF - Free 200MB+ PDF Compressor | Up to 90% Smaller</title>
+    <title>MinimizePDF - Free 200MB+ PDF Minimizer & Compressor</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -154,6 +204,14 @@
         .hide-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        /* Line clamp utility */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
     <script type="importmap">

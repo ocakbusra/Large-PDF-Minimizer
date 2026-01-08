@@ -11,32 +11,32 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://esm.sh/pdfjs-dist@4.0.379/buil
  * Metin seçilebilirliği kaybolur ancak boyut garantili düşer.
  */
 export const compressPDF = async (
-  file: File, 
+  file: File,
   onProgress: (progress: number) => void
 ): Promise<{ blob: Blob; size: number }> => {
   try {
     onProgress(5);
     const arrayBuffer = await file.arrayBuffer();
-    
+
     // PDF'i PDF.js ile yükle (Rendering için)
     const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
     const pdf = await loadingTask.promise;
     const totalPages = pdf.numPages;
-    
+
     // Yeni PDF oluştur (pdf-lib ile)
     const outPdf = await PDFDocument.create();
-    
+
     // Her sayfayı tek tek işle (Bellek dostu)
     for (let i = 1; i <= totalPages; i++) {
       const page = await pdf.getPage(i);
-      
+
       // 150 DPI kalite ayarı (Okunabilirlik için ideal)
       const viewport = page.getViewport({ scale: 1.5 });
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d', { alpha: false });
-      
+
       if (!context) throw new Error('Canvas context oluşturulamadı');
-      
+
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
@@ -48,10 +48,10 @@ export const compressPDF = async (
       // Sayfayı orta-yüksek kaliteli JPEG'e dönüştür (%50+ tasarrufun sırrı burası)
       const imgData = canvas.toDataURL('image/jpeg', 0.65);
       const imgBytes = await fetch(imgData).then(res => res.arrayBuffer());
-      
+
       const embeddedImg = await outPdf.embedJpg(imgBytes);
       const newPage = outPdf.addPage([viewport.width, viewport.height]);
-      
+
       newPage.drawImage(embeddedImg, {
         x: 0,
         y: 0,
@@ -61,17 +61,16 @@ export const compressPDF = async (
 
       // İlerlemeyi güncelle (10-90 arası)
       onProgress(10 + Math.floor((i / totalPages) * 80));
-      
+
       // Canvas temizliği
       canvas.remove();
     }
 
     onProgress(95);
-    
+
     // En yüksek yapısal sıkıştırmayla kaydet
     const compressedBytes = await outPdf.save({
-      useObjectStreams: true,
-      addDefaultFont: false
+      useObjectStreams: true
     });
 
     const compressedBlob = new Blob([compressedBytes], { type: 'application/pdf' });

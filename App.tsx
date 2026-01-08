@@ -1,19 +1,32 @@
+/**
+ * MinimizePDF - Main Application
+ * Refactored for SEO, performance, and maintainability
+ */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import {
-  FileUp, FileCheck, Download, Trash2, AlertCircle, Loader2, Zap, Sparkles,
-  ArrowRight, ShieldCheck, Menu, X, CheckCircle2, Lock, Cpu, Globe
+  FileUp, FileCheck, Download, Trash2, AlertCircle, Zap, Sparkles,
+  ShieldCheck, Menu, X, CheckCircle2, Lock, Cpu, Globe
 } from 'lucide-react';
 import { CompressionStatus, PDFFile } from './types';
 import { compressPDF, formatBytes } from './services/pdfService';
 import { ConsentBanner } from './ConsentBanner';
 import { Routes, Route, useParams, Navigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { seoPages } from './src/seoData';
 import { PrivacyPolicy } from './PrivacyPolicy';
 import { TermsOfUse } from './TermsOfUse';
 import { ProVersion } from './ProVersion';
 import { AdvertisementBox } from './AdvertisementBox';
+
+// SEO Components
+import { SEOHead, InternalLinks, FAQSection } from './src/components';
+import {
+  seoPages,
+  getPopularPages,
+  DEFAULT_META,
+  SITE_CONFIG,
+  type SEOPageData,
+} from './src/seo';
+
 // --- TRANSLATIONS ---
 
 const translations = {
@@ -26,9 +39,9 @@ const translations = {
     },
     hero: {
       badge: "200MB+ Supported — FREE",
-      titleStart: "Compress Huge PDFs",
+      titleStart: "Minimize PDF Files",
       titleEnd: "For Free.",
-      subtitle: "Other tools block files over 200MB. We compress them up to 90% — completely free, right in your browser.",
+      subtitle: "The best PDF Minimizer for 200MB+ files. We minimize files up to 90% — completely free, right in your browser.",
     },
     compressor: {
       dropTitle: "Drop Your Giant PDF Here",
@@ -64,8 +77,8 @@ const translations = {
       smartDesc: "No hidden fees, no subscriptions. Files stay in your browser — never touch our servers."
     },
     howItWorks: {
-      title: "How We Handle Giant Files?",
-      desc: "While competitors reject files over 200MB, our engine processes them in chunks. We remove bloat, optimize images, and deliver up to 90% compression — all in your browser.",
+      title: "How We Minimize Giant Files?",
+      desc: "While competitors reject files over 200MB, our engine processes them in chunks. We remove bloat, optimize images, and deliver up to 90% size reduction — all in your browser.",
       step1: "Chunked processing for massive files",
       step2: "Remove hidden bloat & metadata",
       step3: "Rebuild at 90% smaller size",
@@ -73,7 +86,7 @@ const translations = {
       layerDesc: "200MB+ files welcome"
     },
     footer: {
-      desc: "The only free PDF compressor that handles 200MB+ files. Up to 90% compression, zero uploads.",
+      desc: "The only free PDF Minimizer that handles 200MB+ files. Up to 90% compression, zero uploads.",
       product: "Product",
       legal: "Legal",
       privacy: "Privacy Policy",
@@ -100,9 +113,9 @@ const translations = {
     },
     hero: {
       badge: "200MB+ Destekleniyor — ÜCRETSİZ",
-      titleStart: "Dev PDF'leri",
-      titleEnd: "Ücretsiz Küçült.",
-      subtitle: "Diğer araçlar 200MB üstü dosyaları engeller. Biz onları %90'a kadar küçültüyoruz — tamamen ücretsiz, tarayıcınızda.",
+      titleStart: "Ücretsiz PDF Küçültme:",
+      titleEnd: "Dosya Boyutunu Online Düşür",
+      subtitle: "Diğer araçlar 200MB üstü dosyaları engeller. Biz %90'a kadar küçültüyoruz — programsız, online ve tamamen ücretsiz.",
     },
     compressor: {
       dropTitle: "Dev PDF'inizi Buraya Bırakın",
@@ -172,7 +185,7 @@ const translations = {
 interface LanguageContextType {
   language: 'en' | 'tr';
   setLanguage: (lang: 'en' | 'tr') => void;
-  t: any;
+  t: typeof translations.en;
 }
 
 const LanguageContext = React.createContext<LanguageContextType>({
@@ -185,14 +198,14 @@ export const useLanguage = () => React.useContext(LanguageContext);
 
 // --- COMPONENTS ---
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -203,14 +216,14 @@ const Navbar = () => {
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center gap-3 group">
           <div className="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-200 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
             <Zap className="text-white w-6 h-6" />
           </div>
           <span className="text-2xl font-black tracking-tight leading-none text-slate-900">
             Minimize<span className="text-indigo-600">PDF</span>
           </span>
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-8 font-medium text-slate-600">
           <a href="#how-it-works" className="hover:text-indigo-600 transition-colors">{t.nav.howItWorks}</a>
@@ -218,6 +231,7 @@ const Navbar = () => {
           <button
             onClick={toggleLanguage}
             className="flex items-center gap-1 hover:text-indigo-600 transition-colors"
+            aria-label="Toggle language"
           >
             <Globe size={18} />
             <span className="uppercase">{language}</span>
@@ -227,14 +241,18 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <button className="md:hidden text-slate-900" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button
+          className="md:hidden text-slate-900"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle mobile menu"
+        >
           {mobileMenuOpen ? <X /> : <Menu />}
         </button>
       </div>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 p-6 md:hidden flex flex-col gap-4 shadow-xl animate-in slide-in-from-top-4">
+        <div className="absolute top-full left-0 right-0 bg-white border-b border-slate-100 p-6 md:hidden flex flex-col gap-4 shadow-xl">
           <a href="#how-it-works" className="text-lg font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>{t.nav.howItWorks}</a>
           <a href="#features" className="text-lg font-medium text-slate-600" onClick={() => setMobileMenuOpen(false)}>{t.nav.features}</a>
           <button onClick={() => { toggleLanguage(); setMobileMenuOpen(false); }} className="flex items-center gap-2 text-lg font-medium text-slate-600">
@@ -248,7 +266,7 @@ const Navbar = () => {
   );
 };
 
-const PDFCompressor = () => {
+const PDFCompressor: React.FC = () => {
   const [status, setStatus] = useState<CompressionStatus>(CompressionStatus.IDLE);
   const [file, setFile] = useState<PDFFile | null>(null);
   const [progress, setProgress] = useState<number>(0);
@@ -324,7 +342,13 @@ const PDFCompressor = () => {
 
         {status === CompressionStatus.IDLE && !file && (
           <div className="relative group text-center py-12 md:py-20">
-            <input type="file" accept=".pdf" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
+            <input
+              type="file"
+              accept=".pdf,application/pdf"
+              onChange={handleFileChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              aria-label="Select PDF file"
+            />
             <div className="bg-indigo-50 w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform duration-500 group-hover:bg-indigo-100">
               <FileUp className="text-indigo-600 w-12 h-12 md:w-16 md:h-16" />
             </div>
@@ -337,7 +361,7 @@ const PDFCompressor = () => {
         )}
 
         {file && status !== CompressionStatus.COMPLETED && status !== CompressionStatus.COMPRESSING && (
-          <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+          <div className="space-y-8">
             <div className="flex items-center gap-6 bg-slate-50/80 p-6 rounded-[2rem] border border-slate-100">
               <div className="bg-indigo-600 p-4 rounded-2xl shadow-lg shadow-indigo-200 shrink-0">
                 <FileCheck className="text-white" size={32} />
@@ -349,7 +373,11 @@ const PDFCompressor = () => {
                   <span className="text-indigo-600 font-black">{formatBytes(file.size)}</span>
                 </div>
               </div>
-              <button onClick={reset} className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+              <button
+                onClick={reset}
+                className="p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                aria-label="Remove file"
+              >
                 <Trash2 size={24} />
               </button>
             </div>
@@ -389,7 +417,7 @@ const PDFCompressor = () => {
               <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${progress}%` }} />
             </div>
 
-            {/* Did You Know Section - Adds publisher content to processing screen */}
+            {/* Did You Know Section */}
             <div className="max-w-md mx-auto bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 text-left mt-8">
               <h4 className="flex items-center gap-2 font-bold text-indigo-900 mb-2">
                 <Sparkles size={16} className="text-indigo-600" />
@@ -401,7 +429,6 @@ const PDFCompressor = () => {
               </p>
             </div>
 
-            {/* Processing Ad - Gold Spot */}
             <AdvertisementBox
               slot="processing-slot-id"
               style={{ width: '300px', height: '250px' }}
@@ -412,7 +439,7 @@ const PDFCompressor = () => {
         )}
 
         {status === CompressionStatus.COMPLETED && file && (
-          <div className="space-y-10 animate-in zoom-in-95 duration-500">
+          <div className="space-y-10">
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 text-green-600 rounded-full mb-6 relative">
                 <Sparkles className="absolute -top-2 -right-2 text-yellow-400 animate-bounce" />
@@ -454,7 +481,6 @@ const PDFCompressor = () => {
               </button>
             </div>
 
-            {/* Download Page Ad - Safe Buffer Zone */}
             <div className="mt-12 border-t border-slate-100 pt-8">
               <AdvertisementBox
                 slot="download-slot-id"
@@ -477,7 +503,7 @@ const PDFCompressor = () => {
   );
 };
 
-const Features = () => {
+const Features: React.FC = () => {
   const { t } = useLanguage();
 
   const features = [
@@ -522,7 +548,7 @@ const Features = () => {
   );
 }
 
-const HowItWorks = () => {
+const HowItWorks: React.FC = () => {
   const { t } = useLanguage();
 
   return (
@@ -566,9 +592,8 @@ const HowItWorks = () => {
                 <p className="text-sm text-indigo-300">{t.howItWorks.layerDesc}</p>
               </div>
             </div>
-            {/* Decorative blobs */}
             <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500 rounded-full blur-2xl opacity-50 animate-blob" />
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-fuchsia-500 rounded-full blur-2xl opacity-50 animate-blob animation-delay-2000" />
+            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-fuchsia-500 rounded-full blur-2xl opacity-50 animate-blob" />
           </div>
         </div>
       </div>
@@ -576,23 +601,25 @@ const HowItWorks = () => {
   );
 }
 
-const Footer = () => {
+const Footer: React.FC = () => {
   const { t } = useLanguage();
+  const popularPages = getPopularPages(10);
 
   return (
     <footer className="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
       <div className="max-w-7xl mx-auto px-6">
+        {/* Popular Compressions - Internal Linking */}
         <div className="border-b border-slate-900 pb-12 mb-12">
           <h4 className="text-white font-bold mb-6">Popular Compressions</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-y-3 gap-x-4">
-            {seoPages.map((page) => (
-              <a
+            {popularPages.map((page) => (
+              <Link
                 key={page.slug}
-                href={`/${page.slug}`}
+                to={`/${page.slug}`}
                 className="text-xs text-slate-500 hover:text-indigo-400 transition-colors"
               >
                 {page.heroTitleStart} {page.heroTitleEnd}
-              </a>
+              </Link>
             ))}
           </div>
         </div>
@@ -614,7 +641,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm">
               <li><a href="#features" className="hover:text-white transition-colors">{t.nav.features}</a></li>
               <li><Link to="/pro" className="hover:text-white transition-colors">{t.nav.pro}</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+              <li><a href="mailto:support@minimizepdf.com" className="hover:text-white transition-colors">API</a></li>
             </ul>
           </div>
           <div>
@@ -622,7 +649,7 @@ const Footer = () => {
             <ul className="space-y-4 text-sm">
               <li><Link to="/privacy-policy" className="hover:text-white transition-colors">{t.footer.privacy}</Link></li>
               <li><Link to="/terms-of-use" className="hover:text-white transition-colors">{t.footer.terms}</Link></li>
-              <li><a href="#" className="hover:text-white transition-colors">{t.footer.contact}</a></li>
+              <li><a href="mailto:support@minimizepdf.com" className="hover:text-white transition-colors">{t.footer.contact}</a></li>
             </ul>
           </div>
         </div>
@@ -638,21 +665,125 @@ const Footer = () => {
   );
 };
 
-// --- APP ---
+// --- SEO CONTENT COMPONENT (TR ONLY) ---
 
-const LandingPage = () => {
+const SEOContent: React.FC = () => {
+  return (
+    <section className="py-20 bg-white border-t border-slate-100">
+      <div className="max-w-4xl mx-auto px-6 text-slate-700 leading-relaxed font-sans">
+        <article className="prose prose-slate prose-lg max-w-none">
+          <h2 className="text-3xl font-black text-slate-900 mb-8 tracking-tight">Ücretsiz PDF Küçültme: Dosya Boyutunu Kalite Kaybı Olmadan Düşürün</h2>
+
+          <p className="mb-6 text-lg">
+            Büyük boyutlu PDF dosyaları e-posta gönderirken, sisteme dosya yüklerken veya depolama alanınızı yönetirken büyük bir sorun olabilir.
+            <strong>MinimizePDF</strong>, "pdf küçültme" ve "pdf boyutu düşürme" işlemlerini en güvenli, en hızlı ve tamamen ücretsiz şekilde yapmanızı sağlar.
+            Programsız çözümler arıyorsanız, tarayıcınız üzerinden saniyeler içinde GB'larca büyüklükteki dosyaları bile sıkıştırabilirsiniz.
+          </p>
+
+          <h3 className="text-2xl font-bold text-slate-900 mb-4 mt-12">PDF Boyutu Nasıl Küçültülür?</h3>
+          <p className="mb-4">
+            Hiçbir teknik bilgiye ihtiyacınız yok. 3 adımda PDF sıkıştırma işlemi:
+          </p>
+          <ul className="list-none space-y-4 mb-8">
+            <li className="flex items-start gap-3">
+              <span className="bg-indigo-100 text-indigo-700 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">1</span>
+              <span><strong>Dosyanızı Seçin:</strong> Yukarıdaki alana PDF dosyanızı sürükleyin veya "Dosya Seçin" butonuna tıklayın. 200MB üzeri dosyalar desteklenir (Sınır yok!).</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="bg-indigo-100 text-indigo-700 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">2</span>
+              <span><strong>Otomatik Sıkıştırma:</strong> Akıllı algoritmamız dosyanızı analiz eder, metinleri ve görselleri kalite kaybı olmadan optimize eder.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="bg-indigo-100 text-indigo-700 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5">3</span>
+              <span><strong>İndirin:</strong> İşlem bittiğinde yeni dosya boyutunu görün ve dosyanızı anında indirin.</span>
+            </li>
+          </ul>
+
+          <h3 className="text-2xl font-bold text-slate-900 mb-4 mt-12">Neden Online PDF Küçültücü Kullanmalısınız?</h3>
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-900 mb-2">🚀 Programsız ve Kurulumsuz</h4>
+              <p className="text-sm">Bilgisayarınıza veya telefonunuza herhangi bir uygulama indirmenize gerek yok. İster Windows, ister Mac, ister iPhone veya Android kullanın; tarayıcınız yeterli.</p>
+            </div>
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-900 mb-2">⚡ Hızlı ve Güvenli</h4>
+              <p className="text-sm">Dosyalarınız sunucuya yüklenmez, doğrudan tarayıcınızda (client-side) işlenir. Bu sayede hem işlem çok hızlıdır hem de verileriniz %100 güvendedir.</p>
+            </div>
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-900 mb-2">💎 Kalite Kaybı Yok</h4>
+              <p className="text-sm">Akıllı sıkıştırma teknolojimiz, dosya boyutunu (MB) düşürürken okunabilirliği ve görsel kalitesini korur. "Mb düşürme" işlemi bulanıklaşma anlamına gelmez.</p>
+            </div>
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-900 mb-2">📦 Dev Boyut Desteği</h4>
+              <p className="text-sm">Diğer araçlar 10MB veya 50MB sınırı koyarken, biz 200MB, 500MB+ gibi devasa dosyaları sorunsuz işliyoruz.</p>
+            </div>
+          </div>
+
+          <h3 className="text-2xl font-bold text-slate-900 mb-4 mt-12">Sıkça Sorulan Sorular (SSS)</h3>
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-bold text-slate-900 block mb-1">PDF dosyası kalitesi bozulmadan nasıl küçültülür?</h4>
+              <p className="text-slate-600">MinimizePDF.com algoritmaları, dosya içerisindeki gereksiz meta verileri temizler ve görüntüleri akıllıca optimize eder. Böylece dosya boyutu ciddi oranda düşerken görsel kalite korunur.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 block mb-1">PDF küçültme işlemi güvenli mi?</h4>
+              <p className="text-slate-600">Evet, %100 güvenlidir. WebAssembly teknolojimiz sayesinde dosyanız asla bizim sunucularımıza yüklenmez. Tüm işlem sizin bilgisayarınızda gerçekleşir. Belgeleriniz cihazınızdan dışarı çıkmaz.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 block mb-1">Telefonda PDF boyutu küçültme yapılabilir mi?</h4>
+              <p className="text-slate-600">Kesinlikle. Sitemiz mobil uyumludur. iPhone (iOS) veya Android cihazlarınızdan girerek PDF dosyalarını kolayca sıkıştırabilirsiniz.</p>
+            </div>
+            <div>
+              <h4 className="font-bold text-slate-900 block mb-1">Ücretli mi? Sınır var mı?</h4>
+              <p className="text-slate-600">Tamamen ücretsizdir. Günlük sıkıştırma limiti yoktur. İstediğiniz kadar dosyayı, istediğiniz boyutta (200MB+) küçültebilirsiniz.</p>
+            </div>
+          </div>
+
+        </article>
+      </div>
+    </section>
+  );
+};
+
+// --- LANDING PAGE ---
+
+interface LandingPageProps {
+  pageData?: SEOPageData;
+  isHomePage?: boolean;
+}
+
+const LandingPage: React.FC<LandingPageProps> = ({ pageData, isHomePage = false }) => {
   const { slug } = useParams();
   const { t, language } = useLanguage();
 
-  // Default values based on current language
-  // Default values based on current language
-  let pageData = {
-    title: language === 'tr' ? 'MinimizePDF - Ücretsiz 200MB+ PDF Sıkıştırıcı' : 'MinimizePDF - Free 200MB+ PDF Compressor',
-    description: language === 'tr' ? '200MB üzeri PDF dosyalarını ücretsiz sıkıştırın. %90\'a varan sıkıştırma.' : 'Free PDF compressor for 200MB+ files. Up to 90% compression.',
+  // Determine page data
+  let currentPageData = pageData;
+  let currentSlug = slug;
+
+  if (slug && !pageData) {
+    currentPageData = seoPages.find(p => p.slug === slug);
+    if (!currentPageData) {
+      return <Navigate to="/" replace />;
+    }
+  }
+
+  // Default values for homepage
+  const displayData = currentPageData ? {
+    title: currentPageData.title,
+    description: currentPageData.description,
+    keywords: currentPageData.keywords,
+    heroBadge: currentPageData.heroBadge,
+    heroTitleStart: currentPageData.heroTitleStart,
+    heroTitleEnd: currentPageData.heroTitleEnd,
+    heroSubtitle: currentPageData.heroSubtitle,
+  } : {
+    title: DEFAULT_META[language].title,
+    description: DEFAULT_META[language].description,
+    keywords: SITE_CONFIG.defaultKeywords,
     heroBadge: t.hero.badge,
     heroTitleStart: t.hero.titleStart,
     heroTitleEnd: t.hero.titleEnd,
-    heroSubtitle: t.hero.subtitle
+    heroSubtitle: t.hero.subtitle,
   };
 
   // Dynamic Title Logic
@@ -661,46 +792,27 @@ const LandingPage = () => {
       if (document.hidden) {
         document.title = language === 'tr' ? '⏳ Dosyanız Hazır!' : '⏳ Your file is ready!';
       } else {
-        document.title = pageData.title; // Restore original title
+        document.title = displayData.title;
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [language, pageData.title]);
+  }, [language, displayData.title]);
 
-  // If slug exists, try to find matching SEO page
-  if (slug) {
-    const found = seoPages.find(p => p.slug === slug);
-    if (found) {
-      pageData = {
-        title: found.title,
-        description: found.description,
-        heroBadge: found.heroBadge,
-        heroTitleStart: found.heroTitleStart,
-        heroTitleEnd: found.heroTitleEnd,
-        heroSubtitle: found.heroSubtitle
-      };
-    } else {
-      // If slug provided but not found, redirect to home
-      return <Navigate to="/" replace />;
-    }
-  }
+  const isHome = !currentSlug && isHomePage;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans selection:bg-indigo-500 selection:text-white">
-      <Helmet>
-        <title>{pageData.title}</title>
-        <meta name="description" content={pageData.description} />
-        {/* Canonical Link */}
-        <link rel="canonical" href={`https://minimizepdf.com${slug ? '/' + slug : ''}`} />
-
-        {/* OG Tags override */}
-        <meta property="og:title" content={pageData.title} />
-        <meta property="og:description" content={pageData.description} />
-        <meta property="twitter:title" content={pageData.title} />
-        <meta property="twitter:description" content={pageData.description} />
-      </Helmet>
+      <SEOHead
+        title={displayData.title}
+        description={displayData.description}
+        keywords={displayData.keywords}
+        slug={currentSlug}
+        pageData={currentPageData}
+        language={language}
+        isHomePage={isHome}
+      />
 
       <Navbar />
 
@@ -711,26 +823,26 @@ const LandingPage = () => {
 
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full shadow-sm border border-slate-100 mb-8 animate-in slide-in-from-top-4 fade-in duration-700">
+            <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full shadow-sm border border-slate-100 mb-8">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
-              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{pageData.heroBadge}</span>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{displayData.heroBadge}</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-[1.1] animate-in slide-in-from-bottom-4 fade-in duration-700 delay-100">
-              {pageData.heroTitleStart} <br />
-              <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600">{pageData.heroTitleEnd}</span>
+            <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter mb-6 leading-[1.1]">
+              {displayData.heroTitleStart} <br />
+              <span className="text-indigo-600 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600">{displayData.heroTitleEnd}</span>
             </h1>
-            <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10 animate-in slide-in-from-bottom-4 fade-in duration-700 delay-200">
-              {pageData.heroSubtitle}
+            <p className="text-xl text-slate-500 font-medium leading-relaxed mb-10">
+              {displayData.heroSubtitle}
             </p>
           </div>
 
-          <div className="animate-in slide-in-from-bottom-8 fade-in duration-1000 delay-300">
+          <div>
             <PDFCompressor />
 
-            {/* Welcome Content - SEO & AdSense Content Requirement */}
+            {/* Welcome Content */}
             <div className="max-w-3xl mx-auto mt-16 text-center">
               <h2 className="text-2xl font-bold text-slate-800 mb-4">{t.welcome.title}</h2>
               <p className="text-slate-600 leading-relaxed text-lg">
@@ -738,7 +850,6 @@ const LandingPage = () => {
               </p>
             </div>
 
-            {/* ATF Ad Strategy - Below Content */}
             <AdvertisementBox
               slot="atf-slot-id"
               style={{ minHeight: '100px' }}
@@ -751,17 +862,34 @@ const LandingPage = () => {
       </main>
 
       <Features />
+
+      {/* Turkish SEO Content (only on homepage) */}
+      {language === 'tr' && isHome && <SEOContent />}
+
+      {/* FAQ Section for programmatic pages */}
+      {currentPageData?.faq && currentPageData.faq.length > 0 && (
+        <FAQSection faqs={currentPageData.faq} />
+      )}
+
       <HowItWorks />
+
+      {/* Internal Links for programmatic pages */}
+      {currentSlug && (
+        <InternalLinks currentSlug={currentSlug} title="Related Tools" />
+      )}
+
       <ConsentBanner />
       <Footer />
     </div>
   );
 };
 
-const AppContent = () => {
+// --- APP ROUTING ---
+
+const AppContent: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<LandingPage isHomePage={true} />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="/terms-of-use" element={<TermsOfUse />} />
       <Route path="/pro" element={<ProVersion />} />
